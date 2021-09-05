@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.exam.assess.lrxexam.dao.UserDao">
+
+    <resultMap id="userMap" type="net.exam.assess.lrxexam.entity.UserEntity">
+        <result column="id" jdbcType="BIGINT" property="id" />
+        <result column="first_name" jdbcType="VARCHAR" property="first" />
+        <result column="last_name" jdbcType="VARCHAR" property="last" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="created" jdbcType="TIMESTAMP" property="created" />
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+        <result column="modified" jdbcType="TIMESTAMP" property="modified" />
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+    </resultMap>
+
+    <resultMap id="userActivityMap" type="net.exam.assess.lrxexam.entity.UserActivityEntity">
+        <result column="id" jdbcType="BIGINT" property="id" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="token" jdbcType="VARCHAR" property="token" />
+        <result column="created" jdbcType="TIMESTAMP" property="created" />
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+        <result column="modified" jdbcType="TIMESTAMP" property="modified" />
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+    </resultMap>
+
+    <insert id="createSchema" >
+        create schema lrx_test
+    </insert>
+
+    <insert id="setSchema">
+        set schema lrx_test
+    </insert>
+
+    <insert id="createUserTable" >
+        CREATE TABLE lrx_test.t_user (
+        id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL,
+        email VARCHAR(100) NOT NULL,
+        password VARCHAR(500) NOT NULL,
+        created TIMESTAMP NOT  NULL,
+        created_by VARCHAR(100) NOT NULL,
+        modified TIMESTAMP NOT  NULL,
+        modified_by VARCHAR(100) NOT NULL,
+        CONSTRAINT pk_user PRIMARY KEY (id),
+        CONSTRAINT unq_email unique( email) )
+    </insert>
+
+    <insert id="createUserActivityTable">
+        CREATE TABLE lrx_test.t_user_activity (
+                                id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+                                user_id BIGINT NOT NULL,
+                                token VARCHAR(100) NOT NULL,
+                                created TIMESTAMP NOT  NULL,
+                                created_by VARCHAR(100) NOT NULL,
+                                modified TIMESTAMP NOT  NULL,
+                                modified_by VARCHAR(100) NOT NULL,
+                                CONSTRAINT pk_user_act PRIMARY KEY (id),
+                                CONSTRAINT unq_user_id unique( user_id),
+                                CONSTRAINT unq_token unique( token) )
+    </insert>
+
+    <insert id="createUser" useGeneratedKeys="true" parameterType="UserEntity" keyColumn="ID" keyProperty="id">
+        insert into t_user ( first_name, last_name, email, password, created,  created_By,  modified, modified_By )
+        values ( #{first}, #{last}, #{email}, #{password}, #{created},  #{createdBy},  #{modified}, #{modifiedBy})
+    </insert>
+
+    <insert id="createUserActivity" useGeneratedKeys="true" parameterType="UserActivityEntity"  keyColumn="ID" keyProperty="id">
+        insert into t_user_activity ( user_id, token, created, created_By,  modified, modified_By )
+        values ( #{userId}, #{token}, #{created}, #{createdBy},  #{modified}, #{modifiedBy})
+    </insert>
+
+    <select id="findUserById" resultMap="userMap" parameterType="long">
+        select * from t_user where id = #{id}
+    </select>
+
+    <select id="findUserByEmail" resultMap="userMap" parameterType="string">
+        select * from t_user where email = #{email}
+    </select>
+
+    <select id="findActivityByUserId" resultMap="userActivityMap" parameterType="long">
+        select * from t_user_activity where user_id = #{userId}
+    </select>
+
+    <select id="findActivityByToken" resultMap="userActivityMap" parameterType="string">
+        select * from t_user_activity where token = #{token}
+    </select>
+
+    <update id="delActivityByToken" parameterType="string">
+        delete from t_user_activity where token = #{token}
+    </update>
+
+</mapper>

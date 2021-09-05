@@ -1,0 +1,34 @@
+
+Just for assessment.
+
+requirement:
+jdk 1.8
+mvn 3.8.2 （other version maybe work, the author just use this version and don`t test other version）
+docker
+
+1, build
+%MVN_HOME%\bin\mvn package -D maven.test.skip=true
+when success, there are a jar at %cur_path%\target with name :lrx-exam-0.0.1-SNAPSHOT.jar
+
+tip:
+  in order to succeed in running all test, you had to change the test input,
+  some function, such as user register, can`t register twice using the same input data,
+  thus re-run test case will fail.
+
+2, test build
+java -jar target/lrx-exam-0.0.1-SNAPSHOT.jar
+when finished the start, you can access this project via:
+http://localhost
+
+tip:
+this project used derby as persist storage, thus, running it will automatically generate a new package: lrx_test
+thus there are two issues:
+1, removing lrx_test will remove data.
+2, make sure that creating a director was allowed (especially under *ninx environment).
+
+3, build docker
+docker build  -t test:lrx_test .
+docker run -p 80:80 test:lrx_test
+
+then ,you can access via: http://localhost/
+

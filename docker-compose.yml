@@ -1,0 +1,16 @@
+version: "1"
+service:
+  web:
+    image: test/lrx_test
+    port:
+      - "80"
+    network:
+      - frontend
+
+networks:
+  frontend:
+
+volumes:
+  - /opt/lrx_test
+  - /log
+  - /data
